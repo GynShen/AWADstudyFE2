@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -17,10 +17,12 @@ class LoginController extends Controller
         $this->middleware('guest:admin')->except('logout');
         $this->middleware('guest:author')->except('logout');
     }
+
     public function showAdminLoginForm()
     {
         return view('auth.login', ['url' => 'admin']);
     }
+
     public function adminLogin(Request $request)
     {
         $this->validate($request, [
@@ -32,10 +34,12 @@ class LoginController extends Controller
         }
         return back()->withInput($request->only('email', 'remember'));
     }
+
     public function showAuthorLoginForm()
     {
         return view('auth.login', ['url' => 'author']);
     }
+
     public function authorLogin(Request $request)
     {
         $this->validate($request, [
@@ -46,5 +50,25 @@ class LoginController extends Controller
             return redirect()->intended('/author');
         }
         return back()->withInput($request->only('email', 'remember'));
+    }
+    
+    public function logout(Request $request)
+    {
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('/login/admin');
+        }
+        if (Auth::guard('author')->check()) {
+            Auth::guard('author')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('/login/author');
+        }
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }

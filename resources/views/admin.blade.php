@@ -6,7 +6,7 @@
                 <div class="card">
                     <div class="card-header">Dashboard</div>
                     <div class="card-body">
-                        Welcome to YLLoo’s Web Application.
+                        You must be the priviledged administrator of this site!
                     </div>
                 </div>
             </div>
